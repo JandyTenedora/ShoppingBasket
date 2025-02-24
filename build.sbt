@@ -9,6 +9,5 @@ lazy val root = (project in file("."))
     name := "ShoppingBasket",
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.2.17" % Test
-    ),
-    idePackagePrefix := Some("com.adthena.shoppingbasket")
+    )
   )

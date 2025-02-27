@@ -10,6 +10,7 @@ lazy val root = (project in file("."))
   .settings(
     name := "ShoppingBasket",
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.2.17" % Test
+      "org.scalatest" %% "scalatest" % "3.2.17" % Test,
+      "org.scalatestplus" %% "scalacheck-1-15" % "3.2.10.0" % "test"
     )
   )

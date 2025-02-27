@@ -34,10 +34,15 @@ class DefaultDiscountProvider extends DiscountProvider {
     val loafCount = basket.items.count(_.name == "Bread")
     val potentialLoafDiscounts = loafBonus min loafCount
     val originalBasketPrice = basket.calculatePrice
-    val discountedItems = basket.items.collect {
-      case item @ Item("Bread", currentPrice) => item.copy(price = twoTinsLoafHalfPriceDiscountFunction(currentPrice))
-      case other => other
-    }.take(potentialLoafDiscounts)
+    val discountedItems = {
+      var modifiedCount = 0
+      basket.items.map {
+        case item @ Item("Bread", currentPrice) if modifiedCount < potentialLoafDiscounts =>
+          modifiedCount += 1
+          item.copy(price = twoTinsLoafHalfPriceDiscountFunction(currentPrice))
+        case other => other
+      }
+    }
     val discountedBasketPrice = discountedItems.map(_.price).sum
     val discountAmount = originalBasketPrice - discountedBasketPrice
     println(s"Buy two tins get one loaf half price: $discountAmount")

@@ -13,7 +13,7 @@ class DefaultDiscountProvider extends DiscountProvider {
   )
 
   // Prescribed discount: All apples are 10% off
-  private val appleDiscounts: BasketDiscount = basket => {
+  private[pricing] val appleDiscounts: BasketDiscount = basket => {
     val appleDiscountFunction: BigDecimal => BigDecimal = (x: BigDecimal) => x * 0.9
     val originalBasketPrice = basket.calculatePrice
     val discountedItems = basket.items.map {
@@ -27,7 +27,7 @@ class DefaultDiscountProvider extends DiscountProvider {
   }
 
   // Prescribed discount: Buy 2 tins, get 1 loaf half price
-  private val buyTwoTinsGetLoafHalfPrice: BasketDiscount = basket => {
+  private[pricing] val buyTwoTinsGetLoafHalfPrice: BasketDiscount = basket => {
     val twoTinsLoafHalfPriceDiscountFunction: BigDecimal => BigDecimal = (x: BigDecimal) => x * 0.5
     val tinCount = basket.items.count(_.name == "Soup")
     val loafBonus = tinCount / 2
@@ -35,7 +35,7 @@ class DefaultDiscountProvider extends DiscountProvider {
     val potentialLoafDiscounts = loafBonus min loafCount
     val originalBasketPrice = basket.calculatePrice
     val discountedItems = basket.items.collect {
-      case item @ Item("Bread", currentPrice,) => item.copy(price = twoTinsLoafHalfPriceDiscountFunction(currentPrice))
+      case item @ Item("Bread", currentPrice) => item.copy(price = twoTinsLoafHalfPriceDiscountFunction(currentPrice))
       case other => other
     }.take(potentialLoafDiscounts)
     val discountedBasketPrice = discountedItems.map(_.price).sum
@@ -45,7 +45,7 @@ class DefaultDiscountProvider extends DiscountProvider {
   }
 
   // Example discount: All apples are a flat 5p off
-  private val applesFlatDrop: BasketDiscount = basket => {
+  private[pricing] val applesFlatDrop: BasketDiscount = basket => {
     val apples5cLessDiscountFunction: BigDecimal => BigDecimal = (x: BigDecimal) => (x - 0.05) max 0  //can not go negative
     val discountedItems = basket.items.map {
       case item @ Item("Apple", currentPrice) => item.copy(price = apples5cLessDiscountFunction(currentPrice))

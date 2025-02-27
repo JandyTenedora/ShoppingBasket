@@ -6,7 +6,7 @@ This project is a Scala application that calculates the total price of items in 
 
 - Scala 2.13
 - sbt 1.9.9 (Scala Build Tool)
-- Java 11.0.25-ms
+- Java 11.0.22
 
 ## Dependencies
 
@@ -104,3 +104,24 @@ The `calculatePrice` method sums up the prices of all items in the basket to ret
 ### Tests
 
 - `BasketSpec`: This class is defined in `src/test/scala/com/adthena/shoppingbasket/models/BasketSpec.scala`. It includes property-based tests using ScalaCheck to verify the correctness of the `calculatePrice` method in various scenarios.
+
+## Using Docker
+
+To use Docker for building and running the project, follow these steps:
+
+1. **Pull the Docker image:**
+
+   ```sh
+   docker pull sbtscala/scala-sbt:eclipse-temurin-jammy-11.0.22_7_1.9.9_2.13.12
+   ```
+
+2. **Build the project:**
+
+   ```sh
+   docker build -t shopping-basket-sbt .
+   ```
+   
+3. **Run the application:**
+   ```sh
+   docker run --rm shopping-basket-sbt Apples Apples Bread Soup
+   ```

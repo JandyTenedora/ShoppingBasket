@@ -1,6 +1,7 @@
 package com.adthena.shoppingbasket.pricing
 
 import com.adthena.shoppingbasket.models.Item
+import com.adthena.shoppingbasket.util.CurrencyUtil
 
 class DefaultDiscountProvider extends DiscountProvider {
 
@@ -21,7 +22,7 @@ class DefaultDiscountProvider extends DiscountProvider {
       case other => other
     }
     val discountedBasketPrice = discountedItems.map(_.price).sum
-    val discountAmount = originalBasketPrice - discountedBasketPrice
+    val discountAmount = CurrencyUtil.formatCurrency(originalBasketPrice - discountedBasketPrice)
     println(s"Apples 10% off: $discountAmount")
     basket.copy(items = discountedItems)
   }
@@ -44,7 +45,7 @@ class DefaultDiscountProvider extends DiscountProvider {
       }
     }
     val discountedBasketPrice = discountedItems.map(_.price).sum
-    val discountAmount = originalBasketPrice - discountedBasketPrice
+    val discountAmount = CurrencyUtil.formatCurrency(originalBasketPrice - discountedBasketPrice)
     println(s"Buy two tins get one loaf half price: $discountAmount")
     basket.copy(items = discountedItems)
   }
@@ -56,7 +57,10 @@ class DefaultDiscountProvider extends DiscountProvider {
       case item @ Item("Apple", currentPrice) => item.copy(price = apples5cLessDiscountFunction(currentPrice))
       case other => other
     }
-    println()
+    val originalBasketPrice = basket.calculatePrice
+    val discountedBasketPrice = discountedItems.map(_.price).sum
+    val discountAmount = CurrencyUtil.formatCurrency(originalBasketPrice - discountedBasketPrice)
+    println(s"All apples 5p off: $discountAmount")
     basket.copy(items = discountedItems)
   }
 }

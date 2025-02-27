@@ -13,8 +13,8 @@ class PricingEngineSpec extends AnyFunSpec with Matchers {
       val engine = new PricingEngine.Engine(discountProvider)
 
       val basket = Basket(List(
-        Item("Apple", BigDecimal(1.00)),
-        Item("Apple", BigDecimal(1.00)),
+        Item("Apples", BigDecimal(1.00)),
+        Item("Apples", BigDecimal(1.00)),
         Item("Soup", BigDecimal(0.65)),
         Item("Soup", BigDecimal(0.65)),
         Item("Bread", BigDecimal(0.80))
@@ -23,8 +23,8 @@ class PricingEngineSpec extends AnyFunSpec with Matchers {
       val discountedBasket = engine.applyDiscounts(basket)
 
       val expectedItems = List(
-        Item("Apple", BigDecimal(0.9)), // 10% off
-        Item("Apple", BigDecimal(0.9)), // 10% off
+        Item("Apples", BigDecimal(0.9)), // 10% off
+        Item("Apples", BigDecimal(0.9)), // 10% off
         Item("Soup", BigDecimal(0.65)),
         Item("Soup", BigDecimal(0.65)),
         Item("Bread", BigDecimal(0.40))  // Half price
@@ -33,18 +33,18 @@ class PricingEngineSpec extends AnyFunSpec with Matchers {
       discountedBasket.items should contain theSameElementsAs expectedItems
     }
 
-    it("should apply apple discounts correctly") {
+    it("should apply Apples discounts correctly") {
       val discountProvider = new DefaultDiscountProvider
       val engine = new PricingEngine.Engine(discountProvider)
 
       val basket = Basket(List(
-        Item("Apple", BigDecimal(1.00))
+        Item("Apples", BigDecimal(1.00))
       ))
 
       val discountedBasket = engine.applyDiscounts(basket)
 
       discountedBasket.items should contain theSameElementsAs List(
-        Item("Apple", BigDecimal(0.9)) // 10% off
+        Item("Apples", BigDecimal(0.9)) // 10% off
       )
     }
 
@@ -72,13 +72,13 @@ class PricingEngineSpec extends AnyFunSpec with Matchers {
       val engine = new PricingEngine.Engine(discountProvider)
 
       val basket = Basket(List(
-        Item("Apple", BigDecimal(0.10))
+        Item("Apples", BigDecimal(0.10))
       ))
 
       val discountedBasket = engine.applyDiscounts(basket)
 
       discountedBasket.items should contain theSameElementsAs List(
-        Item("Apple", BigDecimal(0.09)) //10% off, -5p
+        Item("Apples", BigDecimal(0.09)) //10% off, -5p
       )
     }
   }

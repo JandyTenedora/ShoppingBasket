@@ -13,11 +13,11 @@ class DefaultDiscountProviderSpec extends AnyFunSpec with Matchers with ScalaChe
 
     describe("appleDiscounts") {
       it("should apply a 10% discount to all apples") {
-        forAll(Gen.listOf(Gen.oneOf(Item("Apple", 1.00), Item("Apple", 2.00), Item("Bread", 1.50)))) { items =>
+        forAll(Gen.listOf(Gen.oneOf(Item("Apples", 1.00), Item("Apples", 2.00), Item("Bread", 1.50)))) { items =>
           val basket = Basket(items)
           val discountedBasket = discountProvider.appleDiscounts(basket)
           val expectedItems = items.map {
-            case Item("Apple", price) => Item("Apple", price * 0.9)
+            case Item("Apples", price) => Item("Apples", price * 0.9)
             case other => other
           }
           discountedBasket.items should contain theSameElementsAs expectedItems

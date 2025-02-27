@@ -31,7 +31,7 @@ class DefaultDiscountProvider extends DiscountProvider {
     val appleDiscountFunction: BigDecimal => BigDecimal = (x: BigDecimal) => x * 0.9
     val originalBasketPrice = basket.calculatePrice
     val discountedItems = basket.items.map {
-      case item @ Item("Apple", currentPrice) => item.copy(price = appleDiscountFunction(currentPrice))
+      case item @ Item("Apples", currentPrice) => item.copy(price = appleDiscountFunction(currentPrice))
       case other => other
     }
     val discountedBasketPrice = discountedItems.map(_.price).sum

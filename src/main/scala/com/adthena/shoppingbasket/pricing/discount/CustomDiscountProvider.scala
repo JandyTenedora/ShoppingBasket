@@ -21,7 +21,7 @@ class CustomDiscountProvider extends DefaultDiscountProvider {
   private[pricing] val applesFlatDrop: BasketDiscount = basket => {
     val apples5cLessDiscountFunction: BigDecimal => BigDecimal = (x: BigDecimal) => (x - 0.05) max 0  //can not go negative
     val discountedItems = basket.items.map {
-      case item @ Item("Apple", currentPrice) => item.copy(price = apples5cLessDiscountFunction(currentPrice))
+      case item @ Item("Apples", currentPrice) => item.copy(price = apples5cLessDiscountFunction(currentPrice))
       case other => other
     }
     val originalBasketPrice = basket.calculatePrice

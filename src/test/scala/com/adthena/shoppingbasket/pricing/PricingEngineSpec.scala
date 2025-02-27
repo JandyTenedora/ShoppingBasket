@@ -1,7 +1,8 @@
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import com.adthena.shoppingbasket.models.{Basket, Item}
-import com.adthena.shoppingbasket.pricing.{PricingEngine, DefaultDiscountProvider}
+import com.adthena.shoppingbasket.pricing.PricingEngine
+import com.adthena.shoppingbasket.pricing.discount.{CustomDiscountProvider, DefaultDiscountProvider}
 
 class PricingEngineSpec extends AnyFunSpec with Matchers {
 
@@ -22,8 +23,8 @@ class PricingEngineSpec extends AnyFunSpec with Matchers {
       val discountedBasket = engine.applyDiscounts(basket)
 
       val expectedItems = List(
-        Item("Apple", BigDecimal(0.85)), // 10% off, -5p
-        Item("Apple", BigDecimal(0.85)), // 10% off, -5p
+        Item("Apple", BigDecimal(0.9)), // 10% off
+        Item("Apple", BigDecimal(0.9)), // 10% off
         Item("Soup", BigDecimal(0.65)),
         Item("Soup", BigDecimal(0.65)),
         Item("Bread", BigDecimal(0.40))  // Half price
@@ -43,12 +44,12 @@ class PricingEngineSpec extends AnyFunSpec with Matchers {
       val discountedBasket = engine.applyDiscounts(basket)
 
       discountedBasket.items should contain theSameElementsAs List(
-        Item("Apple", BigDecimal(0.85)) // 10% off, -5p
+        Item("Apple", BigDecimal(0.9)) // 10% off
       )
     }
 
     it("should apply buy two tins get one loaf half price discount correctly") {
-      val discountProvider = new DefaultDiscountProvider
+      val discountProvider = new CustomDiscountProvider
       val engine = new PricingEngine.Engine(discountProvider)
 
       val basket = Basket(List(
@@ -77,7 +78,7 @@ class PricingEngineSpec extends AnyFunSpec with Matchers {
       val discountedBasket = engine.applyDiscounts(basket)
 
       discountedBasket.items should contain theSameElementsAs List(
-        Item("Apple", BigDecimal(0.04)) //10% off, -5p
+        Item("Apple", BigDecimal(0.09)) //10% off, -5p
       )
     }
   }

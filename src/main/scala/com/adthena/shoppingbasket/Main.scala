@@ -1,7 +1,8 @@
 package com.adthena.shoppingbasket
 
 import com.adthena.shoppingbasket.models.{Basket, Item}
-import com.adthena.shoppingbasket.pricing.{DefaultDiscountProvider, DiscountProvider, PricingEngine}
+import com.adthena.shoppingbasket.pricing.discount.{DefaultDiscountProvider, DiscountProvider}
+import com.adthena.shoppingbasket.pricing.PricingEngine
 import com.adthena.shoppingbasket.util.CurrencyUtil
 
 object Main extends App {
@@ -20,9 +21,10 @@ object Main extends App {
   private val defaultDiscountProvider: DiscountProvider = new DefaultDiscountProvider
   private val pricingEngine = new PricingEngine.Engine(defaultDiscountProvider)
 
-  val subTotal = CurrencyUtil.formatCurrency(basket.calculatePrice)
+  private val subTotal = CurrencyUtil.formatCurrency(basket.calculatePrice)
   println(s"Subtotal: $subTotal")
-  val newBasket = pricingEngine.applyDiscounts(basket = basket)
-  val totalPrice = CurrencyUtil.formatCurrency(newBasket.calculatePrice)
+
+  private val newBasket = pricingEngine.applyDiscounts(basket = basket)
+  private val totalPrice = CurrencyUtil.formatCurrency(newBasket.calculatePrice)
   println(s"Total Price: $totalPrice")
 }

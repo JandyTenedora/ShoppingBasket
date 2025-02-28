@@ -35,8 +35,8 @@ class DefaultDiscountProvider extends DiscountProvider {
       case other => other
     }
     val discountedBasketPrice = discountedItems.map(_.price).sum
-    val discountAmount = CurrencyUtil.formatCurrency(originalBasketPrice - discountedBasketPrice)
-    println(s"Apples 10% off: $discountAmount")
+    val discountAmount = originalBasketPrice - discountedBasketPrice
+    if (discountAmount != 0) println(s"Apples 10% off: ${CurrencyUtil.formatCurrency(discountAmount)}")
     basket.copy(items = discountedItems)
   }
 
@@ -58,8 +58,8 @@ class DefaultDiscountProvider extends DiscountProvider {
       }
     }
     val discountedBasketPrice = discountedItems.map(_.price).sum
-    val discountAmount = CurrencyUtil.formatCurrency(originalBasketPrice - discountedBasketPrice)
-    println(s"Buy two Tins get one Loaf half price: $discountAmount")
+    val discountAmount = originalBasketPrice - discountedBasketPrice
+    if (discountAmount != 0) println(s"Buy two Tins get one Loaf half price: ${CurrencyUtil.formatCurrency(discountAmount)}")
     basket.copy(items = discountedItems)
   }
 }

@@ -27,10 +27,11 @@ object Main extends App {
   private val defaultDiscountProvider: DiscountProvider = new DefaultDiscountProvider
   private val pricingEngine = new PricingEngine.Engine(defaultDiscountProvider)
 
-  private val subTotal = CurrencyUtil.formatCurrency(basket.calculatePrice)
-  println(s"Subtotal: $subTotal")
+  private val subTotal = basket.calculatePrice
+  println(s"Subtotal: ${CurrencyUtil.formatCurrency(subTotal)}")
 
   private val newBasket = pricingEngine.applyDiscounts(basket = basket)
-  private val totalPrice = CurrencyUtil.formatCurrency(newBasket.calculatePrice)
-  println(s"Total Price: $totalPrice")
+  private val totalPrice = newBasket.calculatePrice
+  if (subTotal == totalPrice) println("(No offers available)")
+  println(s"Total Price: ${CurrencyUtil.formatCurrency(totalPrice)}")
 }

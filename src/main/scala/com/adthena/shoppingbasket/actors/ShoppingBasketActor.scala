@@ -12,20 +12,18 @@ object ShoppingBasketActor {
   case class ProcessBasket(items: List[Item], replyTo: ActorRef[Response]) extends Command
 
   sealed trait Response
-  case class BasketTotal(subtotal: String, total: String) extends Response
+  case class BasketTotal(total: String) extends Response
 
   def apply(pricingEngine: PricingEngine.Engine): Behavior[Command] = Behaviors.receive { (context, message) =>
     message match {
       case ProcessBasket(items, replyTo) =>
         val basket = Basket(items)
-        val subTotal = basket.calculatePrice
-        val formattedSubTotal = CurrencyUtil.formatCurrency(subTotal)
 
         val newBasket = pricingEngine.applyDiscounts(basket)
         val totalPrice = newBasket.calculatePrice
         val formattedTotalPrice = CurrencyUtil.formatCurrency(totalPrice)
 
-        replyTo ! BasketTotal(formattedSubTotal, formattedTotalPrice)
+        replyTo ! BasketTotal(formattedTotalPrice)
         Behaviors.same
     }
   }

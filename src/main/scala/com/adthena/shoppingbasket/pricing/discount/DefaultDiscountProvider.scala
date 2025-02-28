@@ -7,8 +7,9 @@ import com.adthena.shoppingbasket.models.{Basket, Item}
 import com.adthena.shoppingbasket.pricing.PricingEngine
 import com.adthena.shoppingbasket.util.CurrencyUtil
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.{Await, ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
+import scala.concurrent.duration._
 
 /**
  * The `DefaultDiscountProvider` class provides a set of predefined discounts
@@ -23,6 +24,8 @@ import scala.util.{Failure, Success}
  *
  * DefaultDiscountProvider represents the discounts listed in Adthena's Current Special Offers.
  */
+
+
 class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends DiscountProvider {
   override implicit val system: ActorSystem[_] = actorSystem
   override implicit val scheduler: Scheduler = system.scheduler
@@ -35,7 +38,6 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
     buyTwoTinsGetLoafHalfPrice
   )
 
-  // Prescribed discount: All apples are 10% off
   private[pricing] val appleDiscounts: BasketDiscount = basket => {
     val appleDiscountFunction: Item => Item = {
       case item @ Item("Apples", currentPrice) =>
@@ -52,25 +54,19 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
       }
     }
 
-    futureDiscountedItems.onComplete {
-      case Success(discountedItems) =>
-        val discountedBasket = basket.copy(items = discountedItems)
-        val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
-        println(s"Apples 10% off: $discountAmount")
-      case Failure(exception) =>
-        println(s"Failed to apply apple discount: ${exception.getMessage}")
-    }
-
-    basket // Return the original basket for now, as the discount is applied asynchronously
+    val discountedItems = Await.result(futureDiscountedItems, 3.seconds)
+    val discountedBasket = basket.copy(items = discountedItems)
+    val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
+    println(s"Apples 10% off: $discountAmount")
+    discountedBasket
   }
 
-  // Prescribed discount: Buy 2 tins, get 1 loaf half price
   private[pricing] val buyTwoTinsGetLoafHalfPrice: BasketDiscount = basket => {
     val tinCount = basket.items.count(_.name == "Soup")
     val loafBonus = tinCount / 2
 
     val itemDiscountFunction: Item => Item = {
-      case item@Item("Bread", currentPrice) =>
+      case item @ Item("Bread", currentPrice) =>
         val twoTinsLoafHalfPriceDiscountFunction: BigDecimal => BigDecimal = (x: BigDecimal) => x * 0.5
         item.copy(price = twoTinsLoafHalfPriceDiscountFunction(currentPrice))
       case other => other
@@ -89,15 +85,10 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
       Future.sequence(discountedBreadItems ++ remainingBreadItems ++ otherItemsFutures)
     }
 
-    futureDiscountedItems.onComplete {
-      case Success(discountedItems) =>
-        val discountedBasket = basket.copy(items = discountedItems)
-        val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
-        println(s"Buy two Tins get one Loaf half price: $discountAmount")
-      case Failure(exception) =>
-        println(s"Failed to apply buy two tins get loaf half price discount: ${exception.getMessage}")
-    }
-
-    basket // Return the original basket for now, as the discount is applied asynchronously
+    val discountedItems = Await.result(futureDiscountedItems, 3.seconds)
+    val discountedBasket = basket.copy(items = discountedItems)
+    val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
+    println(s"Buy two Tins get one Loaf half price: $discountAmount")
+    discountedBasket
   }
 }

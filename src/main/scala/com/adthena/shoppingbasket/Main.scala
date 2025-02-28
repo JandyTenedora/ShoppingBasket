@@ -1,6 +1,8 @@
-import akka.actor.typed.{ActorSystem, SpawnProtocol}
+package com.adthena.shoppingbasket
+
 import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.typed.{ActorSystem, SpawnProtocol}
 import akka.util.Timeout
 import com.adthena.shoppingbasket.actors.ShoppingBasketActor
 import com.adthena.shoppingbasket.models.Item

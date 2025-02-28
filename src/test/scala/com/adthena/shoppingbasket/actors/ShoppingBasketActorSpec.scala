@@ -28,7 +28,7 @@ class ShoppingBasketActorSpec extends ScalaTestWithActorTestKit with AnyFunSpecL
       shoppingBasketActor ! ShoppingBasketActor.ProcessBasket(items, probe.ref)
       val response = probe.expectMessageType[ShoppingBasketActor.BasketTotal]
 
-      response.total shouldBe "£3.50"
+      response.total shouldBe 3.50
     }
 
     it("should handle an empty basket") {
@@ -38,7 +38,7 @@ class ShoppingBasketActorSpec extends ScalaTestWithActorTestKit with AnyFunSpecL
       shoppingBasketActor ! ShoppingBasketActor.ProcessBasket(items, probe.ref)
       val response = probe.expectMessageType[ShoppingBasketActor.BasketTotal]
 
-      response.total shouldBe "0p"
+      response.total shouldBe 0
     }
 
     it("should calculate the total price of a basket without discounts applied") {
@@ -51,7 +51,7 @@ class ShoppingBasketActorSpec extends ScalaTestWithActorTestKit with AnyFunSpecL
       shoppingBasketActor ! ShoppingBasketActor.ProcessBasket(items, probe.ref)
       val response = probe.expectMessageType[ShoppingBasketActor.BasketTotal]
 
-      response.total shouldBe "£3.00"
+      response.total shouldBe 3.00
     }
   }
 }

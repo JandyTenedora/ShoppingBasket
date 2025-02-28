@@ -12,7 +12,7 @@ import com.adthena.shoppingbasket.util.CurrencyUtil
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.convert.ImplicitConversions.`map AsScala`
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 
 object Main extends App {
@@ -30,6 +30,7 @@ object Main extends App {
       key -> BigDecimal(value)
   }
 
+
   // Create a list of items based on command-line arguments
   private val basketItems = args.flatMap(item => items.get(item).map(price => Item(item, price)))
 
@@ -39,8 +40,8 @@ object Main extends App {
 
   private val shoppingBasketActor = system.systemActorOf(ShoppingBasketActor(pricingEngine), "shoppingBasketActor")
 
-  val subTotal = CurrencyUtil.formatCurrency(basketItems.map(_.price).sum)
-  println(s"Subtotal: $subTotal")
+  val subTotal = basketItems.map(_.price).sum
+  println(s"Subtotal: ${CurrencyUtil.formatCurrency(subTotal)}")
 
   // Use Akka's Ask pattern to get a response from the actor
   implicit val timeout: Timeout = 3.seconds
@@ -50,7 +51,8 @@ object Main extends App {
   val response = Await.result(responseFuture, 3.seconds)
   response match {
     case ShoppingBasketActor.BasketTotal(totalPrice) =>
-      println(s"Total Price: $totalPrice")
+      if (totalPrice equals subTotal) println("(No offers available)")
+      println(s"Total Price: ${CurrencyUtil.formatCurrency(totalPrice)}")
   }
 
   // Shutdown the system after processing

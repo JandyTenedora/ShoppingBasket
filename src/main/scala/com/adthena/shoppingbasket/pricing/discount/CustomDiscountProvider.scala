@@ -29,8 +29,8 @@ class CustomDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Defau
     }
     val originalBasketPrice = basket.calculatePrice
     val discountedBasketPrice = discountedItems.map(_.price).sum
-    val discountAmount = CurrencyUtil.formatCurrency(originalBasketPrice - discountedBasketPrice)
-    println(s"All Apples 5p off: $discountAmount")
+    val discountAmount = originalBasketPrice - discountedBasketPrice
+    if (discountAmount != 0) println(s"All Apples 5p off: ${CurrencyUtil.formatCurrency(discountAmount)}")
     basket.copy(items = discountedItems)
   }
 

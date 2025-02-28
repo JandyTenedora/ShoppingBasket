@@ -1,7 +1,8 @@
 package com.adthena.shoppingbasket.pricing.discount
 
-import akka.actor.typed.{ActorSystem, Scheduler}
+import akka.actor.typed.{ActorRef, ActorSystem, Scheduler, SupervisorStrategy}
 import akka.actor.typed.scaladsl.AskPattern.Askable
+import akka.actor.typed.scaladsl.{Behaviors, Routers}
 import com.adthena.shoppingbasket.actors.ItemDiscountActor
 import com.adthena.shoppingbasket.models.{Basket, Item}
 import com.adthena.shoppingbasket.pricing.PricingEngine
@@ -30,6 +31,12 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
   override implicit val scheduler: Scheduler = system.scheduler
   override implicit val ec: ExecutionContextExecutor = system.executionContext
 
+  // Create a pool router for ItemDiscountActor
+  override implicit val itemDiscountRouter: ActorRef[ItemDiscountActor.Command] = system.systemActorOf(
+    Routers.pool(poolSize = 5)(Behaviors.supervise(ItemDiscountActor()).onFailure[Exception](SupervisorStrategy.restart)),
+    "itemDiscountRouter"
+  )
+
   import PricingEngine.BasketDiscount
 
   override def getDiscounts: List[BasketDiscount] = List(
@@ -45,18 +52,16 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
       case other => other
     }
 
-    val itemDiscountActor = createDiscountActor(appleDiscountFunction)
-
     val futureDiscountedItems: Future[List[Item]] = Future.sequence {
       basket.items.map { item =>
-        itemDiscountActor.ask(ItemDiscountActor.ApplyItemDiscount(item, _))
+        itemDiscountRouter.ask(ItemDiscountActor.ApplyItemDiscount(item, appleDiscountFunction, _))
       }
     }
 
     val discountedItems = Await.result(futureDiscountedItems, 3.seconds)
     val discountedBasket = basket.copy(items = discountedItems)
-    val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
-    println(s"Apples 10% off: $discountAmount")
+    val discountAmount = basket.calculatePrice - discountedBasket.calculatePrice
+    if (discountAmount != 0) println(s"Apples 10% off: ${CurrencyUtil.formatCurrency(discountAmount)}")
     discountedBasket
   }
 
@@ -71,12 +76,10 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
       case other => other
     }
 
-    val itemDiscountActor = createDiscountActor(itemDiscountFunction)
-
     val futureDiscountedItems: Future[List[Item]] = {
       val (breadItems, otherItems) = basket.items.partition(_.name == "Bread")
       val discountedBreadItems = breadItems.take(loafBonus).map { item =>
-        itemDiscountActor.ask(ItemDiscountActor.ApplyItemDiscount(item, _))
+        itemDiscountRouter.ask(ItemDiscountActor.ApplyItemDiscount(item, itemDiscountFunction, _))
       }
       val remainingBreadItems = breadItems.drop(loafBonus).map(Future.successful)
       val otherItemsFutures = otherItems.map(Future.successful)
@@ -86,8 +89,8 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
 
     val discountedItems = Await.result(futureDiscountedItems, 3.seconds)
     val discountedBasket = basket.copy(items = discountedItems)
-    val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
-    println(s"Buy two Tins get one Loaf half price: $discountAmount")
+    val discountAmount = basket.calculatePrice - discountedBasket.calculatePrice
+    if (discountAmount != 0) println(s"Buy two Tins get one Loaf half price: ${CurrencyUtil.formatCurrency(discountAmount)}")
     discountedBasket
   }
 }

@@ -1,8 +1,11 @@
 package com.adthena.shoppingbasket.pricing.discount
 
+import akka.actor.typed.{ActorSystem, Scheduler}
 import com.adthena.shoppingbasket.models.Item
 import com.adthena.shoppingbasket.pricing.PricingEngine.BasketDiscount
 import com.adthena.shoppingbasket.util.CurrencyUtil
+
+import scala.concurrent.ExecutionContextExecutor
 
 /**
  * The `CustomDiscountProvider` class extends the `DefaultDiscountProvider` class
@@ -11,7 +14,11 @@ import com.adthena.shoppingbasket.util.CurrencyUtil
  * This class serves as an example to the extensibility of this shopping basket application,
  * and demonstrates how to add custom discounts
  */
-class CustomDiscountProvider extends DefaultDiscountProvider {
+class CustomDiscountProvider(implicit actorSystem: ActorSystem[_]) extends DefaultDiscountProvider {
+  override implicit val system: ActorSystem[_] = actorSystem
+  override implicit val scheduler: Scheduler = system.scheduler
+  override implicit val ec: ExecutionContextExecutor = system.executionContext
+
   override def getDiscounts: List[BasketDiscount] = List(
     appleDiscounts,
     buyTwoTinsGetLoafHalfPrice,

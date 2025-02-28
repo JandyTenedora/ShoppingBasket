@@ -1,12 +1,25 @@
 package com.adthena.shoppingbasket.pricing.discount
 
+import akka.actor.typed.ActorSystem
+import akka.actor.testkit.typed.scaladsl.ActorTestKit
 import com.adthena.shoppingbasket.models.{Basket, Item}
 import org.scalacheck.Gen
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class DefaultDiscountProviderSpec extends AnyFunSpec with Matchers with ScalaCheckPropertyChecks {
+class DefaultDiscountProviderSpec extends AnyFunSpec with Matchers with ScalaCheckPropertyChecks with BeforeAndAfterAll{
+  // Create an ActorTestKit instance
+  private val testKit = ActorTestKit()
+
+  // Implicit ActorSystem
+  implicit val system: ActorSystem[_] = testKit.system
+
+  override def afterAll(): Unit = {
+    // Shutdown the ActorTestKit
+    testKit.shutdownTestKit()
+  }
 
   describe("DefaultDiscountProvider") {
     val discountProvider = new DefaultDiscountProvider

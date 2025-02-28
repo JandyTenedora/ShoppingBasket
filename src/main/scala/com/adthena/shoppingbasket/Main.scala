@@ -8,6 +8,7 @@ import com.adthena.shoppingbasket.actors.ShoppingBasketActor
 import com.adthena.shoppingbasket.models.Item
 import com.adthena.shoppingbasket.pricing.PricingEngine
 import com.adthena.shoppingbasket.pricing.discount.{DefaultDiscountProvider, DiscountProvider}
+import com.adthena.shoppingbasket.util.CurrencyUtil
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.convert.ImplicitConversions.`map AsScala`
@@ -38,7 +39,7 @@ object Main extends App {
 
   private val shoppingBasketActor = system.systemActorOf(ShoppingBasketActor(pricingEngine), "shoppingBasketActor")
 
-  val subTotal = basketItems.map(_.price).sum
+  val subTotal = CurrencyUtil.formatCurrency(basketItems.map(_.price).sum)
   println(s"Subtotal: $subTotal")
 
   // Use Akka's Ask pattern to get a response from the actor

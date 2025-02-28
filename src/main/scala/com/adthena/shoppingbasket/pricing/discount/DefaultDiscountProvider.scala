@@ -55,8 +55,8 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
 
     val discountedItems = Await.result(futureDiscountedItems, 3.seconds)
     val discountedBasket = basket.copy(items = discountedItems)
-    val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
-    println(s"Apples 10% off: $discountAmount")
+    val discountAmount = basket.calculatePrice - discountedBasket.calculatePrice
+    if (discountAmount != 0) println(s"Apples 10% off: ${CurrencyUtil.formatCurrency(discountAmount)}")
     discountedBasket
   }
 
@@ -86,8 +86,8 @@ class DefaultDiscountProvider(implicit actorSystem: ActorSystem[_]) extends Disc
 
     val discountedItems = Await.result(futureDiscountedItems, 3.seconds)
     val discountedBasket = basket.copy(items = discountedItems)
-    val discountAmount = CurrencyUtil.formatCurrency(basket.calculatePrice - discountedBasket.calculatePrice)
-    println(s"Buy two Tins get one Loaf half price: $discountAmount")
+    val discountAmount = basket.calculatePrice - discountedBasket.calculatePrice
+    if (discountAmount != 0) println(s"Buy two Tins get one Loaf half price: ${CurrencyUtil.formatCurrency(discountAmount)}")
     discountedBasket
   }
 }

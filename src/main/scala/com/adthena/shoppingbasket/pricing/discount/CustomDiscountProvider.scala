@@ -15,10 +15,6 @@ import scala.concurrent.ExecutionContextExecutor
  * and demonstrates how to add custom discounts
  */
 class CustomDiscountProvider(implicit actorSystem: ActorSystem[_]) extends DefaultDiscountProvider {
-  override implicit val system: ActorSystem[_] = actorSystem
-  override implicit val scheduler: Scheduler = system.scheduler
-  override implicit val ec: ExecutionContextExecutor = system.executionContext
-
   override def getDiscounts: List[BasketDiscount] = List(
     appleDiscounts,
     buyTwoTinsGetLoafHalfPrice,

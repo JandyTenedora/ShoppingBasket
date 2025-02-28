@@ -1,3 +1,5 @@
+package com.adthena.shoppingbasket.models
+
 import org.scalatest.propspec.AnyPropSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck.Gen

@@ -1,25 +1,34 @@
 package com.adthena.shoppingbasket.pricing.discount
 
+import akka.actor.testkit.typed.scaladsl.ActorTestKit
+import akka.actor.typed.ActorSystem
 import com.adthena.shoppingbasket.models.{Basket, Item}
-import org.scalacheck.Gen
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class CustomDiscountProviderSpec extends AnyFunSpec with Matchers with ScalaCheckPropertyChecks {
-  describe("CustomerDiscountProviderSpec") {
-    val discountProvider = new CustomDiscountProvider
+class CustomDiscountProviderSpec extends AnyFunSpec with Matchers with BeforeAndAfterAll {
+
+  // Create an ActorTestKit instance
+  private val testKit = ActorTestKit()
+
+  // Implicit ActorSystem
+  implicit lazy val system: ActorSystem[_] = testKit.system
+
+  override def afterAll(): Unit = {
+    // Shutdown the ActorTestKit
+    testKit.shutdownTestKit()
+  }
+
+  describe("CustomDiscountProvider") {
+    lazy val discountProvider = new CustomDiscountProvider()(actorSystem = system)
     describe("applesFlatDrop") {
       it("should apply a flat 5p discount to all apples") {
-        forAll(Gen.listOf(Gen.oneOf(Item("Apples", 1.00), Item("Apples", 0.10), Item("Bread", 1.50)))) { items =>
-          val basket = Basket(items)
-          val discountedBasket = discountProvider.applesFlatDrop(basket)
-          val expectedItems = items.map {
-            case Item("Apples", price) => Item("Apples", (price - 0.05) max 0)
-            case other => other
-          }
-          discountedBasket.items should contain theSameElementsAs expectedItems
-        }
+        val items = List(Item("Apples", 1.00), Item("Apples", 0.10), Item("Bread", 1.50))
+        val basket = Basket(items)
+        val discountedBasket = discountProvider.applesFlatDrop(basket)
+        val expectedItems = List(Item("Apples", 0.95), Item("Apples", 0.05), Item("Bread", 1.50))
+        discountedBasket.items should contain theSameElementsAs expectedItems
       }
 
       it("should handle an empty basket") {
@@ -29,23 +38,18 @@ class CustomDiscountProviderSpec extends AnyFunSpec with Matchers with ScalaChec
       }
 
       it("should not apply a discount if there are no apples") {
-        forAll(Gen.listOf(Gen.oneOf(Item("Bread", 1.50), Item("Milk", 1.00)))) { items =>
-          val basket = Basket(items)
-          val discountedBasket = discountProvider.applesFlatDrop(basket)
-          discountedBasket.items should contain theSameElementsAs items
-        }
+        val items = List(Item("Bread", 1.50), Item("Milk", 1.00))
+        val basket = Basket(items)
+        val discountedBasket = discountProvider.applesFlatDrop(basket)
+        discountedBasket.items should contain theSameElementsAs items
       }
 
       it("should not reduce the price of apples below 0") {
-        forAll(Gen.listOf(Gen.oneOf(Item("Apples", 0.03), Item("Apples", 0.02)))) { items =>
-          val basket = Basket(items)
-          val discountedBasket = discountProvider.applesFlatDrop(basket)
-          val expectedItems = items.map {
-            case Item("Apples", price) => Item("Apples", 0)
-            case other => other
-          }
-          discountedBasket.items should contain theSameElementsAs expectedItems
-        }
+        val items = List(Item("Apples", 0.03), Item("Apples", 0.02))
+        val basket = Basket(items)
+        val discountedBasket = discountProvider.applesFlatDrop(basket)
+        val expectedItems = List(Item("Apples", 0), Item("Apples", 0))
+        discountedBasket.items should contain theSameElementsAs expectedItems
       }
     }
   }

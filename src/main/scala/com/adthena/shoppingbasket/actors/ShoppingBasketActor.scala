@@ -14,7 +14,7 @@ object ShoppingBasketActor {
   sealed trait Response
   case class BasketTotal(total: String) extends Response
 
-  def apply(pricingEngine: PricingEngine.Engine): Behavior[Command] = Behaviors.receive { (context, message) =>
+  def apply(pricingEngine: PricingEngine.Engine): Behavior[Command] = Behaviors.receive { (_, message) =>
     message match {
       case ProcessBasket(items, replyTo) =>
         val basket = Basket(items)

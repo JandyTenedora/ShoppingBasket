@@ -8,7 +8,6 @@ import com.adthena.shoppingbasket.pricing.PricingEngine
 import com.adthena.shoppingbasket.util.CurrencyUtil
 
 import scala.concurrent.{Await, ExecutionContextExecutor, Future}
-import scala.util.{Failure, Success}
 import scala.concurrent.duration._
 
 /**

@@ -1,14 +1,21 @@
-package com.adthena.shoppingbasket
-
-import com.adthena.shoppingbasket.models.{Basket, Item}
-import com.adthena.shoppingbasket.pricing.discount.{DefaultDiscountProvider, DiscountProvider}
+import akka.actor.typed.{ActorSystem, SpawnProtocol}
+import akka.actor.typed.scaladsl.AskPattern._
+import akka.actor.typed.scaladsl.Behaviors
+import akka.util.Timeout
+import com.adthena.shoppingbasket.actors.ShoppingBasketActor
+import com.adthena.shoppingbasket.models.Item
 import com.adthena.shoppingbasket.pricing.PricingEngine
-import com.adthena.shoppingbasket.util.CurrencyUtil
+import com.adthena.shoppingbasket.pricing.discount.{DefaultDiscountProvider, DiscountProvider}
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.convert.ImplicitConversions.`map AsScala`
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 object Main extends App {
+  implicit val system: ActorSystem[SpawnProtocol.Command] =
+    ActorSystem(Behaviors.setup[SpawnProtocol.Command](_ => SpawnProtocol()), "shoppingBasketSystem")
+
   // Load the configuration
   val config = ConfigFactory.load()
   val itemsConfig = config.getConfig("shoppingbasket.items")
@@ -22,15 +29,24 @@ object Main extends App {
   // Create a list of items based on command-line arguments
   private val basketItems = args.flatMap(item => items.get(item).map(price => Item(item, price)))
 
-  val basket = Basket(basketItems.toList)
-
+  // Create actor system and the shopping basket actor
   private val defaultDiscountProvider: DiscountProvider = new DefaultDiscountProvider
   private val pricingEngine = new PricingEngine.Engine(defaultDiscountProvider)
 
-  private val subTotal = CurrencyUtil.formatCurrency(basket.calculatePrice)
-  println(s"Subtotal: $subTotal")
+  private val shoppingBasketActor = system.systemActorOf(ShoppingBasketActor(pricingEngine), "shoppingBasketActor")
 
-  private val newBasket = pricingEngine.applyDiscounts(basket = basket)
-  private val totalPrice = CurrencyUtil.formatCurrency(newBasket.calculatePrice)
-  println(s"Total Price: $totalPrice")
+  // Use Akka's Ask pattern to get a response from the actor
+  implicit val timeout: Timeout = 3.seconds
+  val responseFuture = shoppingBasketActor.ask(ref => ShoppingBasketActor.ProcessBasket(basketItems.toList, ref))
+
+  // Await and print the response
+  val response = Await.result(responseFuture, 3.seconds)
+  response match {
+    case ShoppingBasketActor.BasketTotal(subTotal, totalPrice) =>
+      println(s"Subtotal: $subTotal")
+      println(s"Total Price: $totalPrice")
+  }
+
+  // Shutdown the system after processing
+  system.terminate()
 }

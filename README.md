@@ -42,6 +42,9 @@ Replace `<item1>`, `<item2>`, etc., with the names of the items you want to add 
 java -jar target/scala-2.13/ShoppingBasket-assembly-0.1.0-SNAPSHOT.jar Soup Bread Milk
 ```
 
+Note: The implementation of this app assumes all inputs of items are correctly spelled and exist in the configuration (described below). Case insensitivity is a trivial extension and can be added in the future. 
+All item entries which are not exact string matches of the keys in the application.conf will not be included in the calculation. 
+
 ## Configuration
 
 The application uses a configuration file (`application.conf`) to define the prices of items. The configuration file should be placed in the `src/main/resources` directory and should look like this:
@@ -57,6 +60,8 @@ shoppingbasket {
 }
 ```
 
+The application.conf in its current state matches the spec of the assignment.
+
 ## Testing
 
 To run the tests, use the following command:
@@ -68,38 +73,18 @@ sbt test
 This will execute all the unit and property-based tests defined in the project.
 
 ## Modules and Classes
+The modules and class structure depend on the branch/tag currently being used. In the tag titled 'mvp' is a simple base scala application which uses a class injection 
+to handle the introduction of new discounts should they be introduced in the future. 
 
-### Models
+### ER Diagram: MVP (base scala)
+![ER Diagram](docs/Shopping-Basket-ER.png)
 
-- `Item`: Represents an item in the shopping basket with a name and price.
-- `Basket`: Represents a shopping basket containing a list of items. It includes a method to calculate the total price of the items in the basket.
+In the tag akka-mvp-local is an implementation of the shopping basket using the Akka framework to achieve concurrency and parallelism in the application of discounts at the item level. 
 
-### Pricing Module
+### ER Diagram: Akka-MVP (Scala, Akka, Runs Locally)
+![ER Diagram](docs/Shopping-Basket-Akka-ER.png)
 
-The pricing module is responsible for calculating the total price of items in the shopping basket. It includes the following classes:
-
-- `Item`: This class is defined in `src/main/scala/com/adthena/shoppingbasket/models/Item.scala`. It has two properties:
-    - `name`: The name of the item.
-    - `price`: The price of the item as a `BigDecimal`.
-
-```scala
-package com.adthena.shoppingbasket.models
-
-case class Item(name: String, price: BigDecimal)
-```
-
-- `Basket`: This class is defined in `src/main/scala/com/adthena/shoppingbasket/models/Basket.scala`. It has one property:
-    - `items`: A list of `Item` objects. It also includes a method `calculatePrice` to calculate the total price of the items in the basket.
-
-```scala
-package com.adthena.shoppingbasket.models
-
-case class Basket(items: List[Item]) {
-  def calculatePrice: BigDecimal = items.map(_.price).sum
-}
-```
-
-The `calculatePrice` method sums up the prices of all items in the basket to return the total price. This method is tested using both unit tests and property-based tests to ensure its correctness.
+### DiscountProvider
 
 ### Tests
 

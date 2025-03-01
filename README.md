@@ -90,6 +90,8 @@ Discount Provider is the trait through which PricingEngine obtains all of its di
 of the PricingEngine object (discounts must not change the number or types of items in a basket). Attempted implementations of DiscountProviders with discounts that violate these rules will throw
 an IllegalArgumentException. 
 
+**Note: For the Akka implementation, these restrictions have been moved to the DiscountProvider trait itself**
+
 Examples of how to implement discount newer functions can be found in the CustomDiscountProvider class. It is the expectation that any new DiscountProvider class will also include an associated Spec
 with unit tests.
 

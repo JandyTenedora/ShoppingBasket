@@ -15,8 +15,8 @@ The project uses the following libraries:
 - Typesafe Config
 - ScalaTest
 - ScalaCheck
-- Akka Actor (in akka tag)
-- Akka Stream (in akka tag)
+- Akka Actor (`akka-mvp-local`)
+- Akka Stream (`akka-mvp-local`)
 
 These dependencies are managed via `sbt` and are specified in the `build.sbt` file.
 
@@ -75,14 +75,14 @@ sbt test
 This will execute all the unit and property-based tests defined in the project.
 
 ## Modules and Classes
-The modules and class structure depend on the branch/tag currently being used. In the tag titled 'mvp' is a simple base scala application which uses a class injection 
+The modules and class structure depend on the branch/tag currently being used. In the tag titled `mvp` is a simple base scala application which uses a class injection 
 to handle the introduction of new discounts should they be introduced in the future. 
 
 ### ER Diagram: MVP (base scala)
 ![ER Diagram](docs/Shopping-Basket-ER.png)
 
 ### ER Diagram: Akka-MVP (Scala, Akka, Runs Locally)
-In the tag akka-mvp-local is an implementation of the shopping basket using the Akka framework to achieve concurrency and parallelism in the application of discounts at the item level.
+In the tag `akka-mvp-local` is an implementation of the shopping basket using the Akka framework to achieve concurrency and parallelism in the application of discounts at the item level.
 ![ER Diagram](docs/Shopping-Basket-Akka-ER.png)
 
 ### DiscountProvider
@@ -115,3 +115,9 @@ To use Docker for building and running the project, follow these steps:
    ```sh
    docker run --rm shopping-basket-sbt Apples Apples Bread Soup
    ```
+
+
+# Possible Extensions
+There exists future work in possibly deploying this app onto a cluster, leveraging the Akka framework already used in 
+`akka-mvp-local` to attempt to distribute the workload of each ItemDiscountActor across Nodes on a GKE cluster. A start to 
+this work has been made in the branch `akka-cluster` but is not in a working state and is purely a POC.

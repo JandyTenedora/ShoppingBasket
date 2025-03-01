@@ -19,6 +19,7 @@ trait DiscountProvider {
   implicit val ec: ExecutionContextExecutor
 
   def createDiscountActor(discountFunction: Item => Item): ActorRef[ItemDiscountActor.Command] = {
+    require(discountFunction(Item("test", BigDecimal(0))).name == "test", "The discount function must return an Item of the same type")
     system.systemActorOf(ItemDiscountActor(discountFunction), s"discountActor-${discountFunction.hashCode()}-${UUID.randomUUID()}")
   }
 }

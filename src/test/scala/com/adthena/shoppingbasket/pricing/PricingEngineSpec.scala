@@ -1,13 +1,13 @@
+package com.adthena.shoppingbasket.pricing
+
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import com.adthena.shoppingbasket.models.{Basket, Item}
-import com.adthena.shoppingbasket.pricing.PricingEngine
 import com.adthena.shoppingbasket.pricing.discount.{CustomDiscountProvider, DefaultDiscountProvider}
 
 class PricingEngineSpec extends AnyFunSpec with Matchers {
 
   describe("PricingEngine") {
-
     it("should apply all discounts correctly") {
       val discountProvider = new DefaultDiscountProvider
       val engine = new PricingEngine.Engine(discountProvider)

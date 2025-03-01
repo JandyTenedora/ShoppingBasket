@@ -10,7 +10,6 @@ class CurrencyUtilSpec extends AnyFunSpec with Matchers with ScalaCheckPropertyC
   describe("CurrencyUtil") {
 
     describe("formatCurrency") {
-
       it("should format amounts less than 1 as pence") {
         forAll(Gen.choose(0.0, 0.99)) { amount =>
           val formatted = CurrencyUtil.formatCurrency(BigDecimal(amount))

@@ -7,8 +7,10 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class CustomDiscountProviderSpec extends AnyFunSpec with Matchers with ScalaCheckPropertyChecks {
+
   describe("CustomerDiscountProviderSpec") {
     val discountProvider = new CustomDiscountProvider
+
     describe("applesFlatDrop") {
       it("should apply a flat 5p discount to all apples") {
         forAll(Gen.listOf(Gen.oneOf(Item("Apples", 1.00), Item("Apples", 0.10), Item("Bread", 1.50)))) { items =>

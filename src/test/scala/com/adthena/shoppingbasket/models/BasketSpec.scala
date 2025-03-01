@@ -1,7 +1,8 @@
+package com.adthena.shoppingbasket.models
+
 import org.scalatest.propspec.AnyPropSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalacheck.Gen
-import com.adthena.shoppingbasket.models.{Basket, Item}
 
 class BasketSpec extends AnyPropSpec with ScalaCheckPropertyChecks {
 

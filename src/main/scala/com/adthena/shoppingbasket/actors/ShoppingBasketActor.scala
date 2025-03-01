@@ -4,7 +4,6 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import com.adthena.shoppingbasket.models.{Basket, Item}
 import com.adthena.shoppingbasket.pricing.PricingEngine
-import com.adthena.shoppingbasket.util.CurrencyUtil
 
 object ShoppingBasketActor {
   // Messages that the actor can handle

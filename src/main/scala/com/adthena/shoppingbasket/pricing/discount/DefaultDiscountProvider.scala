@@ -4,7 +4,7 @@ import akka.actor.typed.{ActorRef, ActorSystem, Scheduler, SupervisorStrategy}
 import akka.actor.typed.scaladsl.AskPattern.Askable
 import akka.actor.typed.scaladsl.{Behaviors, Routers}
 import com.adthena.shoppingbasket.actors.ItemDiscountActor
-import com.adthena.shoppingbasket.models.{Basket, Item}
+import com.adthena.shoppingbasket.models.Item
 import com.adthena.shoppingbasket.pricing.PricingEngine
 import com.adthena.shoppingbasket.util.CurrencyUtil
 

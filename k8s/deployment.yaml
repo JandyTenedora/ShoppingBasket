@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: akka-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: akka-app
+  template:
+    metadata:
+      labels:
+        app: akka-app
+    spec:
+      containers:
+        - name: akka-app
+          image: gcr.io/adthena-sample/shopping-basket-sbt:latest
+          ports:
+            - containerPort: 8080

@@ -25,6 +25,7 @@ val akkaDependencies = Seq(
 )
 
 val testDependencies = Seq(
+  "org.scalatest" %% "scalatest" % "3.2.10" % Test,
   "org.scalatestplus" %% "scalacheck-1-15" % "3.2.10.0" % Test,
   "com.typesafe.akka" %% "akka-actor-testkit-typed" % "2.6.19" % Test
 )

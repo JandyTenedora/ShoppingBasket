@@ -6,19 +6,31 @@ import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import com.adthena.shoppingbasket.models.{Basket, Item}
 import com.adthena.shoppingbasket.pricing.discount.{CustomDiscountProvider, DefaultDiscountProvider}
-import org.scalatest.BeforeAndAfterAll
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
-class PricingEngineSpec extends AnyFunSpec with Matchers with BeforeAndAfterAll{
+class PricingEngineSpec extends AnyFunSpec with Matchers with BeforeAndAfterEach{
   // Create an ActorTestKit instance
-  private val testKit = ActorTestKit()
+  private var testKit = ActorTestKit()
 
   // Implicit ActorSystem
-  implicit val actorSystem: ActorSystem[_] = testKit.system
+  implicit var actorSystem: ActorSystem[_] = testKit.system
+
+  override def beforeEach(): Unit = {
+    // Initialize the ActorTestKit before each test
+    testKit = ActorTestKit()
+    actorSystem = testKit.system
+    super.beforeEach()
+  }
+
+  override def afterEach(): Unit = {
+    // Shutdown the ActorTestKit after each test
+    testKit.shutdownTestKit()
+    super.afterEach()
+  }
 
   describe("PricingEngine") {
-    val discountProvider = new DefaultDiscountProvider()(actorSystem)
-
     it("should apply all discounts correctly") {
+      val discountProvider = new DefaultDiscountProvider()
       val engine = new PricingEngine.Engine(discountProvider)
 
       val basket = Basket(List(

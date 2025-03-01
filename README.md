@@ -15,6 +15,8 @@ The project uses the following libraries:
 - Typesafe Config
 - ScalaTest
 - ScalaCheck
+- Akka Actor (in akka tag)
+- Akka Stream (in akka tag)
 
 These dependencies are managed via `sbt` and are specified in the `build.sbt` file.
 
@@ -79,16 +81,17 @@ to handle the introduction of new discounts should they be introduced in the fut
 ### ER Diagram: MVP (base scala)
 ![ER Diagram](docs/Shopping-Basket-ER.png)
 
-In the tag akka-mvp-local is an implementation of the shopping basket using the Akka framework to achieve concurrency and parallelism in the application of discounts at the item level. 
-
 ### ER Diagram: Akka-MVP (Scala, Akka, Runs Locally)
+In the tag akka-mvp-local is an implementation of the shopping basket using the Akka framework to achieve concurrency and parallelism in the application of discounts at the item level.
 ![ER Diagram](docs/Shopping-Basket-Akka-ER.png)
 
 ### DiscountProvider
+Discount Provider is the trait through which PricingEngine obtains all of its discount logic. The minimum standards for a valid discount function has been enforced in the applyDiscount function
+of the PricingEngine object (discounts must not change the number or types of items in a basket). Attempted implementations of DiscountProviders with discounts that violate these rules will throw
+an IllegalArgumentException. 
 
-### Tests
-
-- `BasketSpec`: This class is defined in `src/test/scala/com/adthena/shoppingbasket/models/BasketSpec.scala`. It includes property-based tests using ScalaCheck to verify the correctness of the `calculatePrice` method in various scenarios.
+Examples of how to implement discount newer functions can be found in the CustomDiscountProvider class. It is the expectation that any new DiscountProvider class will also include an associated Spec
+with unit tests.
 
 ## Using Docker
 

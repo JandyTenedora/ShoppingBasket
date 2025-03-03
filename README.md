@@ -115,9 +115,3 @@ To use Docker for building and running the project, follow these steps:
    ```sh
    docker run --rm shopping-basket-sbt Apples Apples Bread Soup
    ```
-
-
-# Possible Extensions
-There exists future work in possibly deploying this app onto a cluster, leveraging the Akka framework already used in 
-`akka-mvp-local` to attempt to distribute the workload of each ItemDiscountActor across Nodes on a GKE cluster. A start to 
-this work has been made in the branch `akka-cluster` but is not in a working state and is purely a POC.

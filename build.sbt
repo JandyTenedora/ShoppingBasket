@@ -4,7 +4,7 @@ ThisBuild / scalaVersion := "2.13.12"
 
 enablePlugins(AssemblyPlugin)
 
-assembly / mainClass := Some("com.adthena.shoppingbasket.Main")
+assembly / mainClass := Some("com.shoppingbasket.Main")
 
 lazy val root = (project in file("."))
   .settings(

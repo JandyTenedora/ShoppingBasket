@@ -1,7 +1,7 @@
-package com.adthena.shoppingbasket.pricing
+package com.shoppingbasket.pricing
 
-import com.adthena.shoppingbasket.models.Basket
-import com.adthena.shoppingbasket.pricing.discount.DiscountProvider
+import com.shoppingbasket.models.Basket
+import com.shoppingbasket.pricing.discount.DiscountProvider
 
 object PricingEngine {
 

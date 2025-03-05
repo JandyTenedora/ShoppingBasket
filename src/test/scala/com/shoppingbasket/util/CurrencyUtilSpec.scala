@@ -1,4 +1,4 @@
-package com.adthena.shoppingbasket.util
+package com.shoppingbasket.util
 
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers

@@ -1,6 +1,6 @@
-package com.adthena.shoppingbasket.pricing.discount
+package com.shoppingbasket.pricing.discount
 
-import com.adthena.shoppingbasket.models.{Basket, Item}
+import com.shoppingbasket.models.{Basket, Item}
 import org.scalacheck.Gen
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers

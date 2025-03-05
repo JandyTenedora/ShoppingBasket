@@ -1,9 +1,9 @@
-package com.adthena.shoppingbasket.pricing
+package com.shoppingbasket.pricing
 
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
-import com.adthena.shoppingbasket.models.{Basket, Item}
-import com.adthena.shoppingbasket.pricing.discount.{CustomDiscountProvider, DefaultDiscountProvider, DiscountProvider}
+import com.shoppingbasket.models.{Basket, Item}
+import com.shoppingbasket.pricing.discount.{CustomDiscountProvider, DefaultDiscountProvider, DiscountProvider}
 
 class PricingEngineSpec extends AnyFunSpec with Matchers {
 

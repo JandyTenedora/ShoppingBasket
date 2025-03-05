@@ -1,9 +1,9 @@
-package com.adthena.shoppingbasket
+package com.shoppingbasket
 
-import com.adthena.shoppingbasket.models.{Basket, Item}
-import com.adthena.shoppingbasket.pricing.discount.{DefaultDiscountProvider, DiscountProvider}
-import com.adthena.shoppingbasket.pricing.PricingEngine
-import com.adthena.shoppingbasket.util.CurrencyUtil
+import com.shoppingbasket.models.{Basket, Item}
+import com.shoppingbasket.pricing.PricingEngine
+import com.shoppingbasket.pricing.discount.{DefaultDiscountProvider, DiscountProvider}
+import com.shoppingbasket.util.CurrencyUtil
 import com.typesafe.config.ConfigFactory
 
 import scala.collection.convert.ImplicitConversions.`map AsScala`
@@ -32,6 +32,7 @@ object Main extends App {
 
   private val newBasket = pricingEngine.applyDiscounts(basket = basket)
   private val totalPrice = newBasket.calculatePrice
-  if (subTotal == totalPrice) println("(No offers available)")
+  val discountString = if (subTotal == totalPrice) "(No offers available)\n" else newBasket.discountString
+  print(discountString)
   println(s"Total Price: ${CurrencyUtil.formatCurrency(totalPrice)}")
 }

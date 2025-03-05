@@ -1,4 +1,4 @@
-package com.adthena.shoppingbasket.util
+package com.shoppingbasket.util
 
 object CurrencyUtil {
   def formatCurrency(amount: BigDecimal): String = {

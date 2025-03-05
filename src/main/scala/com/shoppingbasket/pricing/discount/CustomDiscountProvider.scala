@@ -1,8 +1,8 @@
-package com.adthena.shoppingbasket.pricing.discount
+package com.shoppingbasket.pricing.discount
 
-import com.adthena.shoppingbasket.models.Item
-import com.adthena.shoppingbasket.pricing.PricingEngine.BasketDiscount
-import com.adthena.shoppingbasket.util.CurrencyUtil
+import com.shoppingbasket.pricing.PricingEngine.BasketDiscount
+import com.shoppingbasket.models.Item
+import com.shoppingbasket.util.CurrencyUtil
 
 /**
  * The `CustomDiscountProvider` class extends the `DefaultDiscountProvider` class
